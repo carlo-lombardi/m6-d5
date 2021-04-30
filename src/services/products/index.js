@@ -16,6 +16,12 @@ route.get("/", async (req, res, next) => {
           name: {
             $regex: new RegExp(query.criteria.name, "i"),
           },
+          brand: {
+            $regex: new RegExp(query.criteria.brand, "i"),
+          },
+          category: {
+            $regex: new RegExp(query.criteria.category, "i"),
+          },
         },
         query.options.fields
       )
