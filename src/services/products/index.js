@@ -2,14 +2,52 @@ import express from "express";
 import mongoose from "mongoose";
 import { cloudMulter } from "./cloudinary.js";
 import ProductsModel from "./schema.js";
+import q2m from "query-to-mongo";
 
 const route = express.Router();
 
 route.get("/", async (req, res, next) => {
   try {
-    const products = await ProductsModel.find();
-    res.send(products);
+    if (Object.keys(req.query).length > 0) {
+      const query = q2m(req.query);
+      const total = await ProductsModel.countDocuments(query.criteria);
+      const products = await ProductsModel.find(
+        {
+          name: {
+            $regex: new RegExp(query.criteria.name, "i"),
+          },
+          brand: {
+            $regex: new RegExp(query.criteria.brand, "i"),
+          },
+          category: {
+            $regex: new RegExp(query.criteria.category, "i"),
+          },
+        },
+        query.options.fields
+      )
+        .skip(query.options.skip)
+        .limit(query.options.limit)
+        .sort(query.options.sort);
+
+      res.status(200).send({
+        links: query.links("/products", total),
+        products,
+      });
+    } else {
+      next();
+    }
   } catch (err) {
+    console.log(err);
+    next(err);
+  }
+});
+
+route.get("/", async (req, res, next) => {
+  try {
+    const products = await ProductsModel.find();
+    res.status(200).send(products);
+  } catch (err) {
+    console.log(err);
     next(err);
   }
 });
@@ -25,6 +63,7 @@ route.get("/:id", async (req, res, next) => {
       next(error);
     }
   } catch (err) {
+    console.log(err);
     next(err);
   }
 });
@@ -61,10 +100,14 @@ route.delete("/:id", async (req, res, next) => {
 
 route.put("/:id", async (req, res, next) => {
   try {
-    const product = await ProductsModel.findByIdAndUpdate(req.params.id, req.body, {
-      runValidators: true,
-      new: true,
-    });
+    const product = await ProductsModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        runValidators: true,
+        new: true,
+      }
+    );
     if (product) {
       res.send(product);
     } else {
@@ -80,7 +123,10 @@ route.put("/:id", async (req, res, next) => {
 route.get("/:id/reviews", async (req, res, next) => {
   try {
     const id = req.params.id;
-    const { reviews } = await ProductsModel.findById(id, { reviews: 1, _id: 0 });
+    const { reviews } = await ProductsModel.findById(id, {
+      reviews: 1,
+      _id: 0,
+    });
     if (reviews) {
       res.send(reviews);
     } else {
