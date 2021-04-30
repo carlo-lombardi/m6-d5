@@ -5,13 +5,16 @@ import mongoose from "mongoose";
 
 import productsRouter from "./services/products/index.js";
 
-import { notFoundErrorHandler, badRequestErrorHandler, catchAllErrorHandler } from "./errorHandlers.js";
+import {
+  notFoundErrorHandler,
+  badRequestErrorHandler,
+  catchAllErrorHandler,
+} from "./errorHandlers.js";
 
 const server = express();
 
-const port = process.env.PORT;
-
 server.use(express.json());
+const port = process.env.PORT;
 
 server.use(cors());
 
