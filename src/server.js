@@ -4,7 +4,6 @@ import listEndpoints from "express-list-endpoints";
 import mongoose from "mongoose";
 
 import productsRouter from "./services/products/index.js";
-import reviewsRouter from "./services/reviews/index.js";
 
 import { notFoundErrorHandler, badRequestErrorHandler, catchAllErrorHandler } from "./errorHandlers.js";
 
@@ -17,7 +16,6 @@ server.use(express.json());
 server.use(cors());
 
 server.use("/products", productsRouter);
-server.use("/reviews", reviewsRouter);
 
 // ERROR HANDLERS MIDDLEWARES
 
