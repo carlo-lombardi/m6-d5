@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import cloudMulter from "cloudinary.js";
+import { cloudMulter } from "./cloudinary.js";
 import ProductsModel from "./schema.js";
 
 const route = express.Router();
@@ -59,14 +59,10 @@ route.delete("/:id", async (req, res, next) => {
 
 route.put("/:id", async (req, res, next) => {
   try {
-    const product = await ProductsModel.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        runValidators: true,
-        new: true,
-      }
-    );
+    const product = await ProductsModel.findByIdAndUpdate(req.params.id, req.body, {
+      runValidators: true,
+      new: true,
+    });
     if (product) {
       res.send(product);
     } else {
@@ -76,6 +72,21 @@ route.put("/:id", async (req, res, next) => {
     }
   } catch (err) {
     next(err);
+  }
+});
+
+route.get("/:id/reviews", async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const { reviews } = await ProductsModel.findById(id, { reviews: 1, _id: 0 });
+    if (reviews) {
+      res.send(reviews);
+    } else {
+      res.send("No reviews");
+    }
+  } catch (error) {
+    console.log(error);
+    next("While reading reviews list a problem occurred!");
   }
 });
 export default route;
