@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-
+import cloudMulter from "cloudinary.js";
 import ProductsModel from "./schema.js";
 
 const route = express.Router();
@@ -29,9 +29,12 @@ route.get("/:id", async (req, res, next) => {
   }
 });
 
-route.post("/", async (req, res, next) => {
+route.post("/", cloudMulter.single("productImg"), async (req, res, next) => {
   try {
-    const newProduct = new ProductsModel(req.body);
+    const newProduct = new ProductsModel({
+      ...req.body,
+      imageUrl: req.file.path,
+    });
     const { _id } = await newProduct.save();
     res.status(201).send(_id);
   } catch (err) {
