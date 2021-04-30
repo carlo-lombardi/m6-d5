@@ -1,27 +1,28 @@
 export const notFoundErrorHandler = (err, req, res, next) => {
   if (err.httpStatusCode === 404) {
-    res.status(404).send(err.message || "Error not found!")
+    res.status(404).send(err.message || "Error not found!");
   } else {
-    next(err)
+    next(err);
   }
-}
+};
 
 export const badRequestErrorHandler = (err, req, res, next) => {
   if (err.httpStatusCode === 400) {
-    res.status(400).send(err.errorList)
+    res.status(400).send(err.errorList);
   } else {
-    next(err)
+    next(err);
   }
-}
+};
 
 export const forbiddenErrorHandler = (err, req, res, next) => {
   if (err.httpStatusCode === 403) {
-    res.status(403).send("Forbidden!")
+    res.status(403).send("Forbidden!");
   } else {
-    next(err)
+    next(err);
   }
-}
+};
 
 export const catchAllErrorHandler = (err, req, res, next) => {
-  res.status(500).send("Generic Server Error")
-}
+  console.log(err);
+  res.status(500).send("Generic Server Error");
+};

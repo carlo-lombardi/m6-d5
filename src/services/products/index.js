@@ -30,6 +30,7 @@ route.get("/:id", async (req, res, next) => {
 });
 
 route.post("/", cloudMulter.single("productImg"), async (req, res, next) => {
+  console.log("posting");
   try {
     const newProduct = new ProductsModel({
       ...req.body,
@@ -38,6 +39,7 @@ route.post("/", cloudMulter.single("productImg"), async (req, res, next) => {
     const { _id } = await newProduct.save();
     res.status(201).send(_id);
   } catch (err) {
+    console.log(err);
     next(err);
   }
 });
@@ -89,4 +91,63 @@ route.get("/:id/reviews", async (req, res, next) => {
     next("While reading reviews list a problem occurred!");
   }
 });
+
+route.get("/:id/reviews/:reviewId", async (req, res, next) => {
+  console.log("okay reviewId", req.params.reviewId);
+  try {
+    const { reviews } = await ProductsModel.findOne(
+      { _id: mongoose.Types.ObjectId(req.params.id) },
+      {
+        reviews: {
+          $elemMatch: { _id: mongoose.Types.ObjectId(req.params.reviewId) },
+        },
+      }
+    );
+    if (reviews) {
+      res.send(reviews[0]);
+    } else {
+      res.send("No review with that ID");
+    }
+  } catch (error) {
+    console.log(error);
+    next("While reading reviews list a problem occurred!");
+  }
+});
+
+route.post("/:id", async (req, res, next) => {
+  console.log(`hello ${req.params.id} review post`);
+  try {
+    const updated = await ProductsModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $push: {
+          reviews: req.body,
+        },
+      },
+      { runValidators: true, new: true }
+    );
+    res.send(updated);
+  } catch (error) {
+    next(error);
+  }
+});
+
+route.delete("/:id/reviews/:reviewId", async (req, res, next) => {
+  console.log("deleting review");
+  try {
+    const updated = await ProductsModel.findByIdAndUpdate(
+      { _id: mongoose.Types.ObjectId(req.params.id) },
+      {
+        $pull: {
+          reviews: { _id: mongoose.Types.ObjectId(req.params.reviewId) },
+        },
+      },
+      { new: true }
+    );
+    res.send(updated);
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default route;
