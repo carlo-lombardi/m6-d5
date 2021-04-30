@@ -34,20 +34,23 @@ const ProductSchema = new Schema(
       required: true,
       trim: true,
     },
-    reviews: {
-      comment: {
-        type: String,
-        required: true,
-        trim: true,
+    reviews: [
+      {
+        comment: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        rating: {
+          type: Number,
+          required: true,
+          trim: true,
+          min: 1,
+          max: 5,
+        },
       },
-      rating: {
-        type: Number,
-        required: true,
-        trim: true,
-        min: 1,
-        max: 5,
-      },
-    },
+      { timestamps: true },
+    ],
   },
   { timestamps: true }
 );
