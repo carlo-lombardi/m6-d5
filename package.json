@@ -1,5 +1,5 @@
 {
-  "name": "m6-d5",
+  "name": "m6-build-week",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,7 +9,7 @@
     "start": "node ./src/server.js"
   },
   "keywords": [],
-  "author": "slavkojos",
+  "author": "slavkojos-mihai-carlo",
   "license": "ISC",
   "dependencies": {
     "cloudinary": "^1.25.1",
@@ -19,6 +19,7 @@
     "mongoose": "^5.12.5",
     "multer": "^1.4.2",
     "multer-storage-cloudinary": "^4.0.0",
+    "pdfmake": "^0.1.71",
     "query-to-mongo": "^0.10.1"
   },
   "devDependencies": {
