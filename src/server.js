@@ -4,8 +4,13 @@ import listEndpoints from "express-list-endpoints";
 import mongoose from "mongoose";
 
 import profileRouter from "./services/profiles/index.js";
+import postsRouter from "./services/posts/index.js";
 
-import { notFoundErrorHandler, badRequestErrorHandler, catchAllErrorHandler } from "./errorHandlers.js";
+import {
+  notFoundErrorHandler,
+  badRequestErrorHandler,
+  catchAllErrorHandler,
+} from "./errorHandlers.js";
 
 const server = express();
 
@@ -15,6 +20,7 @@ const port = process.env.PORT;
 server.use(cors());
 
 server.use("/profile", profileRouter);
+server.use("/posts", postsRouter);
 
 // ERROR HANDLERS MIDDLEWARES
 

@@ -18,11 +18,20 @@ route.get("/", async (req, res, next) => {
           name: {
             $regex: new RegExp(query.criteria.name, "i"),
           },
-          brand: {
-            $regex: new RegExp(query.criteria.brand, "i"),
+          surname: {
+            $regex: new RegExp(query.criteria.surname, "i"),
           },
-          category: {
-            $regex: new RegExp(query.criteria.category, "i"),
+          email: {
+            $regex: new RegExp(query.criteria.email, "i"),
+          },
+          title: {
+            $regex: new RegExp(query.criteria.title, "i"),
+          },
+          area: {
+            $regex: new RegExp(query.criteria.area, "i"),
+          },
+          username: {
+            $regex: new RegExp(query.criteria.username, "i"),
           },
         },
         query.options.fields
@@ -58,9 +67,9 @@ route.get("/:id", async (req, res, next) => {
   try {
     const profiles = await ProfileModel.findById(req.params.id);
     if (profiles) {
-      res.send(profiles);
+      res.status(200).send(profiles);
     } else {
-      const error = new Error("profiles not found");
+      const error = new Error("profile not found");
       error.httpStatusCode = 404;
       next(error);
     }
@@ -73,11 +82,12 @@ route.get("/:id", async (req, res, next) => {
 route.post("/", uploadImg, async (req, res, next) => {
   console.log("posting");
   try {
-    const newprofile = new ProfileModel({
+    const newProfile = new ProfileModel({
       ...req.body,
       imageUrl: req.file.path,
     });
-    const { _id } = await newprofile.save();
+
+    const { _id } = await newProfile.save();
     res.status(201).send(_id);
   } catch (err) {
     console.log(err);
@@ -111,9 +121,11 @@ route.put("/:id", async (req, res, next) => {
       }
     );
     if (profile) {
-      res.send(profile);
+      res.status(200).send(profile);
     } else {
-      const error = new Error(`profile with id ${req.params.id} not found`);
+      const error = new Error(
+        `The profile with id ${req.params.id} was not found`
+      );
       error.httpStatusCode = 404;
       next(error);
     }
