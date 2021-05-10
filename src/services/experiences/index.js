@@ -1,10 +1,10 @@
 import express from "express";
 import mongoose from "mongoose";
-import cloudMulter from "../../middlewares/cloudinary.js";
+import { cloudMulterExp } from "../../middlewares/cloudinary.js";
 import ExperienceModel from "./schema.js";
 import q2m from "query-to-mongo";
 
-const uploadImg = cloudMulter();
+const uploadImg = cloudMulterExp();
 
 const route = express.Router();
 
@@ -25,6 +25,12 @@ route.get("/", async (req, res, next) => {
           },
           username: {
             $regex: new RegExp(query.criteria.username, "i"),
+          },
+          area: {
+            $regex: new RegExp(query.criteria.area, "i"),
+          },
+          description: {
+            $regex: new RegExp(query.criteria.description, "i"),
           },
         },
         query.options.fields
@@ -56,7 +62,7 @@ route.get("/", async (req, res, next) => {
   }
 });
 
-route.get("/:id", async (req, res, next) => {
+route.get("/:expId", async (req, res, next) => {
   try {
     const experiences = await ExperienceModel.findById(req.params.id);
     if (experiences) {
@@ -71,7 +77,7 @@ route.get("/:id", async (req, res, next) => {
     next(err);
   }
 });
-/* route.post("/", async (req, res, next) => {
+route.post("/", async (req, res, next) => {
   try {
     const newExperience = new ExperienceModel({
       ...req.body,
@@ -82,9 +88,8 @@ route.get("/:id", async (req, res, next) => {
     console.log(err);
     next(err);
   }
-}); */
-route.post("/", uploadImg, async (req, res, next) => {
-  console.log("posting");
+});
+route.post("/:expId/picture", uploadImg, async (req, res, next) => {
   try {
     const newExperience = new ExperienceModel({
       ...req.body,
@@ -98,7 +103,7 @@ route.post("/", uploadImg, async (req, res, next) => {
   }
 });
 
-route.delete("/:id", async (req, res, next) => {
+route.delete("/:expId", async (req, res, next) => {
   try {
     const experience = await ExperienceModel.findByIdAndDelete(req.params.id);
     if (experience) {
@@ -113,7 +118,7 @@ route.delete("/:id", async (req, res, next) => {
   }
 });
 
-route.put("/:id", async (req, res, next) => {
+route.put("/:expId", async (req, res, next) => {
   try {
     const experience = await ExperienceModel.findByIdAndUpdate(
       req.params.id,

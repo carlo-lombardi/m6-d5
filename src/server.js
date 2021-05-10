@@ -21,7 +21,7 @@ const port = process.env.PORT;
 server.use(cors());
 
 server.use("/profile", profileRouter);
-server.use("/experiences", experiencesRouter);
+server.use("/profile/:username/experiences", experiencesRouter);
 server.use("/posts", postsRouter);
 
 // ERROR HANDLERS MIDDLEWARES
