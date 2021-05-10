@@ -4,6 +4,8 @@ import { cloudMulter } from "../../middlewares/cloudinary.js";
 import ProfileModel from "./schema.js";
 import q2m from "query-to-mongo";
 
+const uploadImg = cloudMulter();
+
 const route = express.Router();
 
 route.get("/", async (req, res, next) => {
@@ -68,7 +70,7 @@ route.get("/:id", async (req, res, next) => {
   }
 });
 
-route.post("/", cloudMulter.single("image"), async (req, res, next) => {
+route.post("/", uploadImg, async (req, res, next) => {
   console.log("posting");
   try {
     const newprofile = new ProfileModel({
@@ -100,10 +102,14 @@ route.delete("/:id", async (req, res, next) => {
 
 route.put("/:id", async (req, res, next) => {
   try {
-    const profile = await ProfileModel.findByIdAndUpdate(req.params.id, req.body, {
-      runValidators: true,
-      new: true,
-    });
+    const profile = await ProfileModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        runValidators: true,
+        new: true,
+      }
+    );
     if (profile) {
       res.send(profile);
     } else {
