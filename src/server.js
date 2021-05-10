@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 
 import profileRouter from "./services/profiles/index.js";
 import experiencesRouter from "./services/experiences/index.js";
+import postsRouter from "./services/posts/index.js";
 
 import {
   notFoundErrorHandler,
@@ -21,6 +22,8 @@ server.use(cors());
 
 server.use("/profile", profileRouter);
 server.use("/experiences", experiencesRouter);
+server.use("/posts", postsRouter);
+
 // ERROR HANDLERS MIDDLEWARES
 
 server.use(badRequestErrorHandler);

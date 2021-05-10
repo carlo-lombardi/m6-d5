@@ -24,11 +24,6 @@ const ProfileSchema = new Schema(
       required: true,
       trim: true,
     },
-    price: {
-      type: Number,
-      required: true,
-      trim: true,
-    },
     title: {
       type: String,
       required: true,
@@ -41,7 +36,6 @@ const ProfileSchema = new Schema(
     },
     image: {
       type: String,
-      required: true,
       trim: true,
     },
     username: {
