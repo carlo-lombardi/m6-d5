@@ -31,12 +31,3 @@ const cloudMulter = () => {
 };
 
 export default cloudMulter;
-
-const cloudStorage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "profiles",
-  },
-});
-
-export const cloudMulter = multer({ storage: cloudStorage });
