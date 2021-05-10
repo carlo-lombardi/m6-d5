@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import cloudMulter from "../../middlewares/cloudinary";
+import cloudMulter from "../../middlewares/cloudinary.js";
 import ExperienceModel from "./schema.js";
 import q2m from "query-to-mongo";
 
@@ -12,17 +12,19 @@ route.get("/", async (req, res, next) => {
   try {
     if (Object.keys(req.query).length > 0) {
       const query = q2m(req.query);
-      const total = await ProfileModel.countDocuments(query.criteria);
-      const profiles = await ProfileModel.find(
+      const totalExperiences = await ExperienceModel.countDocuments(
+        query.criteria
+      );
+      const experiences = await ExperienceModel.find(
         {
-          name: {
-            $regex: new RegExp(query.criteria.name, "i"),
+          role: {
+            $regex: new RegExp(query.criteria.role, "i"),
           },
-          brand: {
-            $regex: new RegExp(query.criteria.brand, "i"),
+          company: {
+            $regex: new RegExp(query.criteria.company, "i"),
           },
-          category: {
-            $regex: new RegExp(query.criteria.category, "i"),
+          username: {
+            $regex: new RegExp(query.criteria.username, "i"),
           },
         },
         query.options.fields
@@ -32,8 +34,8 @@ route.get("/", async (req, res, next) => {
         .sort(query.options.sort);
 
       res.status(200).send({
-        links: query.links("/profile", total),
-        profiles,
+        links: query.links("/experiences", totalExperiences),
+        experiences,
       });
     } else {
       next();
@@ -46,8 +48,8 @@ route.get("/", async (req, res, next) => {
 
 route.get("/", async (req, res, next) => {
   try {
-    const profiles = await ProfileModel.find();
-    res.status(200).send(profiles);
+    const experiences = await ExperienceModel.find();
+    res.status(200).send(experiences);
   } catch (err) {
     console.log(err);
     next(err);
@@ -56,11 +58,11 @@ route.get("/", async (req, res, next) => {
 
 route.get("/:id", async (req, res, next) => {
   try {
-    const profiles = await ProfileModel.findById(req.params.id);
-    if (profiles) {
-      res.send(profiles);
+    const experiences = await ExperienceModel.findById(req.params.id);
+    if (experiences) {
+      res.send(experiences);
     } else {
-      const error = new Error("profiles not found");
+      const error = new Error("experiences not found");
       error.httpStatusCode = 404;
       next(error);
     }
@@ -69,15 +71,26 @@ route.get("/:id", async (req, res, next) => {
     next(err);
   }
 });
-
+/* route.post("/", async (req, res, next) => {
+  try {
+    const newExperience = new ExperienceModel({
+      ...req.body,
+    });
+    const { _id } = await newExperience.save();
+    res.status(201).send(_id);
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+}); */
 route.post("/", uploadImg, async (req, res, next) => {
   console.log("posting");
   try {
-    const newprofile = new ProfileModel({
+    const newExperience = new ExperienceModel({
       ...req.body,
       imageUrl: req.file.path,
     });
-    const { _id } = await newprofile.save();
+    const { _id } = await newExperience.save();
     res.status(201).send(_id);
   } catch (err) {
     console.log(err);
@@ -87,11 +100,11 @@ route.post("/", uploadImg, async (req, res, next) => {
 
 route.delete("/:id", async (req, res, next) => {
   try {
-    const profile = await ProfileModel.findByIdAndDelete(req.params.id);
-    if (profile) {
-      res.send("profile deleted!");
+    const experience = await ExperienceModel.findByIdAndDelete(req.params.id);
+    if (experience) {
+      res.send("experience deleted!");
     } else {
-      const error = new Error(`profiles with id ${req.params.id} not found`);
+      const error = new Error(`experiences with id ${req.params.id} not found`);
       error.httpStatusCode = 404;
       next(error);
     }
@@ -102,7 +115,7 @@ route.delete("/:id", async (req, res, next) => {
 
 route.put("/:id", async (req, res, next) => {
   try {
-    const profile = await ProfileModel.findByIdAndUpdate(
+    const experience = await ExperienceModel.findByIdAndUpdate(
       req.params.id,
       req.body,
       {
@@ -110,10 +123,10 @@ route.put("/:id", async (req, res, next) => {
         new: true,
       }
     );
-    if (profile) {
-      res.send(profile);
+    if (experience) {
+      res.send(experience);
     } else {
-      const error = new Error(`profile with id ${req.params.id} not found`);
+      const error = new Error(`experience with id ${req.params.id} not found`);
       error.httpStatusCode = 404;
       next(error);
     }
