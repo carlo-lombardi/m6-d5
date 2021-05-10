@@ -35,7 +35,6 @@ route.get("/:id", async (req, res, next) => {
 });
 
 route.post("/", uploadImg, async (req, res, next) => {
-  console.log("posting");
   try {
     const newPost = new PostModel({
       ...req.body,
