@@ -5,7 +5,7 @@ import multer from "multer";
 const cloudStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "products",
+    folder: "profiles",
   },
 });
 
