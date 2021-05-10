@@ -4,6 +4,7 @@ import listEndpoints from "express-list-endpoints";
 import mongoose from "mongoose";
 
 import profileRouter from "./services/profiles/index.js";
+import experiencesRouter from "./services/experiences/index.js";
 import postsRouter from "./services/posts/index.js";
 
 import {
@@ -20,6 +21,7 @@ const port = process.env.PORT;
 server.use(cors());
 
 server.use("/profile", profileRouter);
+server.use("/experiences", experiencesRouter);
 server.use("/posts", postsRouter);
 
 // ERROR HANDLERS MIDDLEWARES
