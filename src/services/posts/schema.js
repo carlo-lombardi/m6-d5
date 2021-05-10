@@ -13,7 +13,10 @@ const PostSchema = new Schema(
       type: String,
       trim: true,
     },
-    user: {},
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "Profile",
+    },
     image: {
       type: String,
       trim: true,
