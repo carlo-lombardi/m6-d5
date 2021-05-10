@@ -79,16 +79,37 @@ route.get("/:id", async (req, res, next) => {
   }
 });
 
-route.post("/", uploadImg, async (req, res, next) => {
-  console.log("posting");
+route.post("/", async (req, res, next) => {
+  console.log("posting new profile");
+  const defaultProfileImageUrl = "https://simplyilm.com/wp-content/uploads/2017/08/temporary-profile-placeholder-1.jpg";
   try {
     const newProfile = new ProfileModel({
       ...req.body,
-      imageUrl: req.file.path,
+      image: defaultProfileImageUrl,
     });
 
     const { _id } = await newProfile.save();
-    res.status(201).send(_id);
+    res.status(201).send(`New profile with ${_id} created successfully`);
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+});
+
+route.post("/:id/picture", uploadImg, async (req, res, next) => {
+  console.log("changing profile picture");
+  try {
+    const editedProfile = await ProfileModel.findByIdAndUpdate(
+      req.params.id,
+      { image: req.file.path },
+      {
+        runValidators: true,
+        new: true,
+      }
+    );
+
+    const { _id } = await editedProfile.save();
+    res.status(201).send(editedProfile);
   } catch (err) {
     console.log(err);
     next(err);
@@ -112,20 +133,14 @@ route.delete("/:id", async (req, res, next) => {
 
 route.put("/:id", async (req, res, next) => {
   try {
-    const profile = await ProfileModel.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        runValidators: true,
-        new: true,
-      }
-    );
+    const profile = await ProfileModel.findByIdAndUpdate(req.params.id, req.body, {
+      runValidators: true,
+      new: true,
+    });
     if (profile) {
       res.status(200).send(profile);
     } else {
-      const error = new Error(
-        `The profile with id ${req.params.id} was not found`
-      );
+      const error = new Error(`The profile with id ${req.params.id} was not found`);
       error.httpStatusCode = 404;
       next(error);
     }

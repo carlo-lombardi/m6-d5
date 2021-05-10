@@ -12,7 +12,7 @@ const cloudMulter = () => {
 
   const upload = multer({
     storage: cloudinaryStorage,
-    fileFilter: function (req, file, next) {
+    /* fileFilter: function (req, file, next) {
       const acceptedExt = [".png", ".jpg", ".gif", ".bmp", ".jpeg"];
       console.log(file);
       if (!acceptedExt.includes(extname(file.originalname))) {
@@ -25,7 +25,7 @@ const cloudMulter = () => {
         );
       }
       next(null, true);
-    },
+    }, */
   });
   return upload.single("profilePic");
 };
@@ -46,13 +46,7 @@ export const cloudMulterPosts = () => {
       const acceptedExt = [".png", ".jpg", ".gif", ".bmp", ".jpeg"];
       console.log(file);
       if (!acceptedExt.includes(extname(file.originalname))) {
-        return next(
-          new ErrorResponse(
-            `Image type not allowed: ${extname(file.originalname)}`,
-            400,
-            "multerExt"
-          )
-        );
+        return next(new ErrorResponse(`Image type not allowed: ${extname(file.originalname)}`, 400, "multerExt"));
       }
       next(null, true);
     },
@@ -74,13 +68,7 @@ export const cloudMulterExp = () => {
       const acceptedExt = [".png", ".jpg", ".gif", ".bmp", ".jpeg"];
       console.log(file);
       if (!acceptedExt.includes(extname(file.originalname))) {
-        return next(
-          new ErrorResponse(
-            `Image type not allowed: ${extname(file.originalname)}`,
-            400,
-            "multerExt"
-          )
-        );
+        return next(new ErrorResponse(`Image type not allowed: ${extname(file.originalname)}`, 400, "multerExt"));
       }
       next(null, true);
     },
