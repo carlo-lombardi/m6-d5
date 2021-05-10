@@ -42,14 +42,20 @@ export const cloudMulterPosts = () => {
 
   const upload = multer({
     storage: cloudinaryStorage,
-    fileFilter: function (req, file, next) {
-      const acceptedExt = [".png", ".jpg", ".gif", ".bmp", ".jpeg"];
-      console.log(file);
-      if (!acceptedExt.includes(extname(file.originalname))) {
-        return next(new ErrorResponse(`Image type not allowed: ${extname(file.originalname)}`, 400, "multerExt"));
-      }
-      next(null, true);
-    },
+    // fileFilter: function (req, file, next) {
+    //   const acceptedExt = [".png", ".jpg", ".gif", ".bmp", ".jpeg"];
+    //   console.log(file);
+    //   if (!acceptedExt.includes(extname(file.originalname))) {
+    //     return next(
+    //       new ErrorResponse(
+    //         `Image type not allowed: ${extname(file.originalname)}`,
+    //         400,
+    //         "multerExt"
+    //       )
+    //     );
+    //   }
+    //   next(null, true);
+    // },
   });
   return upload.single("PostImg");
 };
@@ -64,14 +70,20 @@ export const cloudMulterExp = () => {
 
   const upload = multer({
     storage: cloudinaryStorage,
-    fileFilter: function (req, file, next) {
-      const acceptedExt = [".png", ".jpg", ".gif", ".bmp", ".jpeg"];
-      console.log(file);
-      if (!acceptedExt.includes(extname(file.originalname))) {
-        return next(new ErrorResponse(`Image type not allowed: ${extname(file.originalname)}`, 400, "multerExt"));
-      }
-      next(null, true);
-    },
+    // fileFilter: function (req, file, next) {
+    //   const acceptedExt = [".png", ".jpg", ".gif", ".bmp", ".jpeg"];
+    //   console.log(file);
+    //   if (!acceptedExt.includes(extname(file.originalname))) {
+    //     return next(
+    //       new ErrorResponse(
+    //         `Image type not allowed: ${extname(file.originalname)}`,
+    //         400,
+    //         "multerExt"
+    //       )
+    //     );
+    //   }
+    //   next(null, true);
+    // },
   });
   return upload.single("ExpImg");
 };

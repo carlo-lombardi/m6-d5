@@ -34,26 +34,32 @@ route.get("/:id", async (req, res, next) => {
   }
 });
 
-route.post("/", async (req, res, next) => {
+route.post("/", uploadImg, async (req, res, next) => {
+  console.log("posting");
   try {
     const newPost = new PostModel({
       ...req.body,
+      image: req.file ? req.file.path : null,
     });
 
     const { _id } = await newPost.save();
-    res.status(201).send(_id);
+    res.status(201).send(newPost);
   } catch (err) {
     console.log(err);
     next(err);
   }
 });
 
-route.put("/:id", async (req, res, next) => {
+route.put("/:id", uploadImg, async (req, res, next) => {
   try {
-    const post = await PostModel.findByIdAndUpdate(req.params.id, req.body, {
-      runValidators: true,
-      new: true,
-    });
+    const post = await PostModel.findByIdAndUpdate(
+      req.params.id,
+      req.file ? { ...req.body, image: req.file.path } : req.body,
+      {
+        runValidators: true,
+        new: true,
+      }
+    );
     if (post) {
       res.status(200).send(post);
     } else {
