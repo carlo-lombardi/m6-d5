@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import { cloudMulter } from "../../middlewares/cloudinary.js";
+import cloudMulter from "../../middlewares/cloudinary.js";
 import ProfileModel from "./schema.js";
 import q2m from "query-to-mongo";
 
