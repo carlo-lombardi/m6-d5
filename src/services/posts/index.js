@@ -21,7 +21,7 @@ route.get("/", async (req, res, next) => {
 route.get("/:id", async (req, res, next) => {
   try {
     const post = await PostModel.findById(req.params.id).populate("user");
-    console.log(post);
+
     if (post) {
       res.status(200).send(post);
     } else {
