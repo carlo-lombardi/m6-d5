@@ -3,10 +3,17 @@ import mongoose from "mongoose";
 import cloudMulter from "../../middlewares/cloudinary.js";
 import ProfileModel from "./schema.js";
 import q2m from "query-to-mongo";
+import pdf from "html-pdf";
+import pdfTemplate from "./pdf-template.js";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
 const uploadImg = cloudMulter();
 
 const route = express.Router();
+
+const currentWorkingFile = fileURLToPath(import.meta.url);
+const currentWorkingDirectory = dirname(currentWorkingFile);
 
 route.get("/", async (req, res, next) => {
   try {
@@ -145,6 +152,30 @@ route.put("/:id", async (req, res, next) => {
       next(error);
     }
   } catch (err) {
+    next(err);
+  }
+});
+
+route.get("/:id/cv", async (req, res, next) => {
+  try {
+    const profile = await ProfileModel.findById(req.params.id);
+
+    if (profile) {
+      pdf.create(pdfTemplate(profile), {}).toFile(`cv.pdf`, (err) => {
+        if (err) {
+          console.log(err);
+        } else {
+          const file = join(currentWorkingDirectory, "../../../cv.pdf");
+          res.sendFile(file);
+        }
+      });
+    } else {
+      const error = new Error("profile not found");
+      error.httpStatusCode = 404;
+      next(error);
+    }
+  } catch (err) {
+    console.log(err);
     next(err);
   }
 });
