@@ -180,4 +180,113 @@ route.get("/:id/cv", async (req, res, next) => {
   }
 });
 
+// ------------------------------------------EXPERIENCES HERE-------------------------------------------------------------------
+
+route.get("/:id/experiences", async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const { experiences } = await ProfileModel.findById(id, {
+      experiences: 1,
+      _id: 0,
+    });
+    if (experiences) {
+      res.send(experiences);
+    } else {
+      res.send("No experiences");
+    }
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+});
+
+route.post("/:id/experiences", async (req, res, next) => {
+  try {
+    const updated = await ProfileModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $push: {
+          experiences: req.body,
+        },
+      },
+      { runValidators: true, new: true }
+    );
+    res.send(updated);
+  } catch (error) {
+    next(error);
+  }
+});
+
+route.get("/:id/experiences/:experienceId", async (req, res, next) => {
+  try {
+    const { experiences } = await ProfileModel.findOne(
+      { _id: mongoose.Types.ObjectId(req.params.id) },
+      {
+        experiences: {
+          $elemMatch: { _id: mongoose.Types.ObjectId(req.params.experienceId) },
+        },
+      }
+    );
+    if (experiences) {
+      res.send(experiences[0]);
+    } else {
+      res.send("No experience with that ID");
+    }
+  } catch (error) {
+    console.log(error);
+    next("While reading experiences list a problem occurred!");
+  }
+});
+
+route.delete("/:id/experiences/:experienceId", async (req, res, next) => {
+  try {
+    const updated = await ProfileModel.findByIdAndUpdate(
+      { _id: mongoose.Types.ObjectId(req.params.id) },
+      {
+        $pull: {
+          experiences: { _id: mongoose.Types.ObjectId(req.params.experienceId) },
+        },
+      },
+      { new: true }
+    );
+    res.send(updated);
+  } catch (error) {
+    next(error);
+  }
+});
+
+route.put("/:id/experiences/:experienceId", async (req, res, next) => {
+  try {
+    const updated = await ProfileModel.findOneAndUpdate(
+      { _id: mongoose.Types.ObjectId(req.params.id), "experiences._id": mongoose.Types.ObjectId(req.params.experienceId) },
+      {
+        $set: {
+          "experiences.$": req.body,
+        },
+      },
+      { new: true }
+    );
+    res.send(updated);
+  } catch (error) {
+    next(error);
+  }
+});
+
+route.post("/:id/experiences/:experienceId/picture", uploadImg, async (req, res, next) => {
+  try {
+    const updated = await ProfileModel.findOneAndUpdate(
+      { _id: mongoose.Types.ObjectId(req.params.id), "experiences._id": mongoose.Types.ObjectId(req.params.experienceId) },
+      {
+        $set: {
+          "experiences.$.image": req.file.path,
+        },
+      },
+      { runValidators: true, new: true }
+    );
+    res.send(updated);
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default route;

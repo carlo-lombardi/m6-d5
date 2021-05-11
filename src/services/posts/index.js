@@ -52,20 +52,14 @@ route.post("/", uploadImg, async (req, res, next) => {
 
 route.put("/:id", uploadImg, async (req, res, next) => {
   try {
-    const post = await PostModel.findByIdAndUpdate(
-      req.params.id,
-      req.file ? { ...req.body, image: req.file.path } : req.body,
-      {
-        runValidators: true,
-        new: true,
-      }
-    );
+    const post = await PostModel.findByIdAndUpdate(req.params.id, req.file ? { ...req.body, image: req.file.path } : req.body, {
+      runValidators: true,
+      new: true,
+    });
     if (post) {
       res.status(200).send(post);
     } else {
-      const error = new Error(
-        `The post with id ${req.params.id} was not found`
-      );
+      const error = new Error(`The post with id ${req.params.id} was not found`);
       error.httpStatusCode = 404;
       next(error);
     }
