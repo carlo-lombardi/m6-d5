@@ -10,7 +10,7 @@ const route = express.Router();
 
 route.get("/", async (req, res, next) => {
   try {
-    const posts = await PostModel.find().populate("user");
+    const posts = await PostModel.find();
     res.status(200).send(posts);
   } catch (err) {
     console.log(err);
