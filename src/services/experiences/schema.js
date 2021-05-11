@@ -37,14 +37,14 @@ const ExperienceSchema = new Schema(
       required: true,
       trim: true,
     },
-    username: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+
     image: {
       type: String,
       trim: true,
+    },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "Profile",
     },
   },
   { timestamps: true }

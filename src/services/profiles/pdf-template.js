@@ -1,6 +1,6 @@
-export default function pdfTemplate(profile) {
+export default function pdfTemplate(profile, experiences) {
   return `
-    <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
   <head>
     <!-- Required meta tags -->
@@ -20,11 +20,24 @@ export default function pdfTemplate(profile) {
   <body>
     <div class="container text-center my-4 h-100">
       <div class="d-flex vh-100 py-3">
-        <div class="w-25 bg-dark p-3 d-flex flex-column justify-content-start align-items-center">
-          <img class="img-fluid w-75 my-2 rounded-2" src="${profile.image}" alt="" />
-          <h4 class="text-light">${profile.name} ${profile.surname}</h4>
+        <div class="w-25 bg-dark p-3 d-flex flex-column justify-content-start align-items-center text-light">
+          <img class="img-fluid w-75 my-2 rounded-2" src="https://www.placecage.com/360/360" alt="" />
+          <h4 class="my-2">Nicholas Cage</h4>
+          <hr class="w-100" />
+
+          <h5 class="my-2 fw-bold">CONTACT INFO</h5>
+          <p>slavkoj6@gmail.com</p>
+          <p>Croatia</p>
+          <hr class="w-100" />
+          <h5 class="fw-bold">ABOUT ME</h5>
+          <p class="fst-italic">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam provident suscipit sapiente, dignissimos atque vel excepturi laborum placeat
+            ipsum id.
+          </p>
         </div>
-        <div class="w-75 bg-secondary"></div>
+        <div class="w-75 bg-light d-flex flex-column text-start px-5 py-3">
+          <h2 class="">Experiences</h2>
+        </div>
       </div>
     </div>
 
@@ -44,6 +57,7 @@ export default function pdfTemplate(profile) {
     -->
   </body>
 </html>
+
 
     `;
 }

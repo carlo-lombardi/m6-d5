@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cloudMulter from "../../middlewares/cloudinary.js";
 import ProfileModel from "./schema.js";
+import ExperienceModel from "..//experiences/schema.js";
 import q2m from "query-to-mongo";
 import pdf from "html-pdf";
 import pdfTemplate from "./pdf-template.js";
@@ -159,9 +160,10 @@ route.put("/:id", async (req, res, next) => {
 route.get("/:id/cv", async (req, res, next) => {
   try {
     const profile = await ProfileModel.findById(req.params.id);
+    const experience = await ExperienceModel.find({ user: mongoose.Types.ObjectId(req.params.id) });
 
     if (profile) {
-      pdf.create(pdfTemplate(profile), {}).toFile(`cv.pdf`, (err) => {
+      pdf.create(pdfTemplate(profile, experience), {}).toFile(`cv.pdf`, (err) => {
         if (err) {
           console.log(err);
         } else {
