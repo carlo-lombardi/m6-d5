@@ -3,6 +3,12 @@ import mongoose from "mongoose";
 import { cloudMulterExp } from "../../middlewares/cloudinary.js";
 import ExperienceModel from "./schema.js";
 import q2m from "query-to-mongo";
+import json2csv from "json2csv";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+// const csv = require("csv");
+const json2csvParser = json2csv.Parser;
+import fs from "fs-extra";
 
 const uploadImg = cloudMulterExp();
 
@@ -56,6 +62,40 @@ route.get("/", async (req, res, next) => {
   try {
     const experiences = await ExperienceModel.find();
     res.status(200).send(experiences);
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+});
+route.get("/CSV", async (req, res, next) => {
+  try {
+    const csvFields = await ExperienceModel.find();
+    const jsonData = JSON.parse(JSON.stringify(csvFields));
+    const fields = [
+      "id",
+      "role",
+      "company",
+      "description",
+      "startDate",
+      "endDate",
+    ];
+    const JSON2CSVParsing = new json2csvParser({ fields });
+    console.log(JSON2CSVParsing);
+    const csvData = JSON2CSVParsing.parse(jsonData);
+    const pathExpData = join(
+      dirname(fileURLToPath(import.meta.url)),
+      "./csv/ExperienceData.csv"
+    );
+    fs.writeFile(pathExpData, csvData, function (error) {
+      if (error) throw error;
+      console.log("successfully!");
+    });
+    res.set("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=ExperienceData.csv"
+    );
+    res.status(200).end(csvData);
   } catch (err) {
     console.log(err);
     next(err);
