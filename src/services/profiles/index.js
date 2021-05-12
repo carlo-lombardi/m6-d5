@@ -4,7 +4,10 @@ import cloudMulter from "../../middlewares/cloudinary.js";
 import ProfileModel from "./schema.js";
 import ExperienceModel from "..//experiences/schema.js";
 import q2m from "query-to-mongo";
+//import pdf from "pdf-creator-node";
+import fs from "fs";
 import pdf from "html-pdf";
+
 import pdfTemplate from "./pdf-template.js";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
@@ -163,7 +166,34 @@ route.get("/:id/cv", async (req, res, next) => {
     const experience = await ExperienceModel.find({ user: mongoose.Types.ObjectId(req.params.id) });
 
     if (profile) {
-      pdf.create(pdfTemplate(profile, experience), {}).toFile(`cv.pdf`, (err) => {
+      /* const html = fs.readFileSync(join(currentWorkingDirectory, "./html/index.html"), "utf-8");
+      var options = {
+        format: "A4",
+        orientation: "portrait",
+        border: "10mm",
+      };
+
+      var document = {
+        html: html,
+        data: {
+          profile: profile,
+          experience: experience,
+        },
+        path: "./output.pdf",
+        type: "",
+        allowProtoMethodsByDefault: true,
+      };
+
+      pdf
+        .create(document, options)
+        .then((result) => {
+          console.log(result);
+          res.sendFile(result.filename);
+        })
+        .catch((error) => {
+          console.error(error);
+        }); */
+      pdf.create(pdfTemplate(profile, experience), { format: "A3" }).toFile(`cv.pdf`, (err) => {
         if (err) {
           console.log(err);
         } else {
