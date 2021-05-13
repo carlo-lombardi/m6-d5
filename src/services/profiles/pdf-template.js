@@ -48,7 +48,7 @@ export default function pdfTemplate(profile, experiences) {
     <div class="container text-center my-4 h-100">
       <div class="d-flex vh-100 py-3 w-100 flex">
         <div class="w-25 bg-dark p-3 d-flex flex-column flex justify-content-start align-items-center text-light">
-          <img class="img-fluid w-75 my-2 rounded-2" src="https://www.placecage.com/360/360" alt="" />
+          <img class="img-fluid w-75 my-2 rounded-2" src="${profile.image}" alt="" />
           <h4 class="my-2">${profile.name} ${profile.surname}</h4>
           <hr class="w-100" />
 
