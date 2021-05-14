@@ -2,10 +2,11 @@ import express from "express";
 import cors from "cors";
 import listEndpoints from "express-list-endpoints";
 import mongoose from "mongoose";
-
 import profileRouter from "./services/profiles/index.js";
 import experiencesRouter from "./services/experiences/index.js";
 import postsRouter from "./services/posts/index.js";
+import authenticateToken from "./middlewares/authToken.js";
+import authRoute from "./middlewares/auth.js";
 
 import {
   notFoundErrorHandler,
@@ -19,6 +20,8 @@ server.use(express.json());
 const port = process.env.PORT;
 
 server.use(cors());
+
+server.use("/", authRoute);
 
 server.use("/profile", profileRouter);
 server.use("/profile", experiencesRouter);

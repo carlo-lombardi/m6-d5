@@ -17,6 +17,7 @@ const ProfileSchema = new Schema(
     email: {
       type: String,
       required: true,
+      lowercase: true,
       trim: true,
     },
     bio: {
@@ -37,9 +38,17 @@ const ProfileSchema = new Schema(
     image: {
       type: String,
       trim: true,
+      default:
+        "https://simplyilm.com/wp-content/uploads/2017/08/temporary-profile-placeholder-1.jpg",
     },
     username: {
       type: String,
+      required: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      select: false,
       required: true,
       trim: true,
     },
