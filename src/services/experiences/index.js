@@ -65,6 +65,7 @@ route.get("/:userId/experiences", async (req, res, next) => {
       user: mongoose.Types.ObjectId(req.params.userId),
     });
     res.status(200).send(experiences);
+    console.log(experiences);
   } catch (err) {
     console.log(err);
     next(err);
