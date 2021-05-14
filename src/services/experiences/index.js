@@ -64,8 +64,8 @@ route.get("/:userId/experiences", async (req, res, next) => {
     const experiences = await ExperienceModel.find({
       user: mongoose.Types.ObjectId(req.params.userId),
     });
-    res.status(200).send(experiences);
     console.log(experiences);
+    res.status(200).send(experiences);
   } catch (err) {
     console.log(err);
     next(err);

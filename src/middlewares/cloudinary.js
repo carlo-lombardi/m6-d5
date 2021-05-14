@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
+import { extname } from "path";
 
 const cloudMulter = () => {
   const cloudinaryStorage = new CloudinaryStorage({

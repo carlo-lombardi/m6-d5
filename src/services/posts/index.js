@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { cloudMulterPosts } from "../../middlewares/cloudinary.js";
 import PostModel from "./schema.js";
 import q2m from "query-to-mongo";
+import CommentSchema from "./commentSchema.js";
 
 const uploadImg = cloudMulterPosts();
 
@@ -90,5 +91,91 @@ route.delete("/:id", async (req, res, next) => {
     next(err);
   }
 });
+// /:postId/user/:userId/comment/:commentId
+route.post(
+  "/:postId/user/:userId/comment",
+  uploadImg,
+  async (req, res, next) => {
+    try {
+      const comment = new CommentSchema(req.body);
+      const newComment = {
+        ...comment.toObject(),
+        image: req.file ? req.file.path : null,
+      };
+
+      const post = await PostModel.findById(req.params.postId);
+      if (post) {
+        await PostModel.findByIdAndUpdate(
+          req.params.postId,
+          {
+            $push: {
+              comments: { ...newComment, userId: req.params.userId },
+            },
+          },
+          {
+            runValidators: true,
+            new: true,
+          }
+        );
+        res.status(201).send(newComment);
+      }
+      next(new NotFoundError(`Post with this Id is not found!`));
+    } catch (err) {
+      console.log(err);
+      next(err);
+    }
+  }
+);
+route.put(
+  "/:postId/user/:userId/comment/:commentId",
+  uploadImg,
+  async (req, res, next) => {
+    try {
+      const editedPost = await PostModel.findOneAndUpdate(
+        {
+          _id: req.params.postId,
+          "comments._id": req.params.commentId,
+        },
+        {
+          $set: {
+            "comments.$.comment": req.body.comment,
+          },
+        },
+        {
+          runValidators: true,
+          new: true,
+        }
+      );
+
+      res.status(201).send(editedPost);
+    } catch (err) {
+      console.log(err);
+      next(err);
+    }
+  }
+);
+route.delete(
+  "/:postId/user/:userId/comment/:commentId",
+  async (req, res, next) => {
+    try {
+      const editedPost = await PostModel.findByIdAndUpdate(
+        {
+          _id: req.params.postId,
+        },
+        {
+          $pull: {
+            comments: { _id: req.params.commentId },
+          },
+        },
+        { new: true }
+      );
+
+      res.status(201).send(editedPost);
+    } catch (err) {
+      console.log(err);
+      next(err);
+    }
+  }
+);
 
 export default route;
