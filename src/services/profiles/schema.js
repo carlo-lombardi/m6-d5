@@ -17,6 +17,7 @@ const ProfileSchema = new Schema(
     email: {
       type: String,
       required: true,
+      lowercase: true,
       trim: true,
     },
     bio: {
@@ -47,6 +48,7 @@ const ProfileSchema = new Schema(
     },
     password: {
       type: String,
+      select: false,
       required: true,
       trim: true,
     },

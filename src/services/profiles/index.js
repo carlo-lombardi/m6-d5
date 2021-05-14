@@ -7,7 +7,8 @@ import q2m from "query-to-mongo";
 //import pdf from "pdf-creator-node";
 import fs from "fs";
 import pdf from "html-pdf";
-
+import jwt from "jsonwebtoken";
+import axios from "axios";
 import pdfTemplate from "./pdf-template.js";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
@@ -18,6 +19,29 @@ const route = express.Router();
 
 const currentWorkingFile = fileURLToPath(import.meta.url);
 const currentWorkingDirectory = dirname(currentWorkingFile);
+
+route.get("/me", async (req, res, next) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const user = (req.userData = decoded).sub;
+
+    await axios
+      .get(`http://localhost:3001/profile/${user}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const updatedUser = response.data;
+        res.status(200).send(updatedUser);
+      });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
 
 route.get("/", async (req, res, next) => {
   try {
@@ -92,7 +116,8 @@ route.get("/:id", async (req, res, next) => {
 
 route.post("/", async (req, res, next) => {
   console.log("posting new profile");
-  const defaultProfileImageUrl = "https://simplyilm.com/wp-content/uploads/2017/08/temporary-profile-placeholder-1.jpg";
+  const defaultProfileImageUrl =
+    "https://simplyilm.com/wp-content/uploads/2017/08/temporary-profile-placeholder-1.jpg";
   try {
     const newProfile = new ProfileModel({
       ...req.body,
@@ -144,14 +169,20 @@ route.delete("/:id", async (req, res, next) => {
 
 route.put("/:id", async (req, res, next) => {
   try {
-    const profile = await ProfileModel.findByIdAndUpdate(req.params.id, req.body, {
-      runValidators: true,
-      new: true,
-    });
+    const profile = await ProfileModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        runValidators: true,
+        new: true,
+      }
+    );
     if (profile) {
       res.status(200).send(profile);
     } else {
-      const error = new Error(`The profile with id ${req.params.id} was not found`);
+      const error = new Error(
+        `The profile with id ${req.params.id} was not found`
+      );
       error.httpStatusCode = 404;
       next(error);
     }
@@ -163,7 +194,9 @@ route.put("/:id", async (req, res, next) => {
 route.get("/:id/cv", async (req, res, next) => {
   try {
     const profile = await ProfileModel.findById(req.params.id);
-    const experience = await ExperienceModel.find({ user: mongoose.Types.ObjectId(req.params.id) });
+    const experience = await ExperienceModel.find({
+      user: mongoose.Types.ObjectId(req.params.id),
+    });
 
     if (profile) {
       /* const html = fs.readFileSync(join(currentWorkingDirectory, "./html/index.html"), "utf-8");
@@ -193,14 +226,16 @@ route.get("/:id/cv", async (req, res, next) => {
         .catch((error) => {
           console.error(error);
         }); */
-      pdf.create(pdfTemplate(profile, experience), { format: "A3" }).toFile(`cv.pdf`, (err) => {
-        if (err) {
-          console.log(err);
-        } else {
-          const file = join(currentWorkingDirectory, "../../../cv.pdf");
-          res.sendFile(file);
-        }
-      });
+      pdf
+        .create(pdfTemplate(profile, experience), { format: "A3" })
+        .toFile(`cv.pdf`, (err) => {
+          if (err) {
+            console.log(err);
+          } else {
+            const file = join(currentWorkingDirectory, "../../../cv.pdf");
+            res.sendFile(file);
+          }
+        });
     } else {
       const error = new Error("profile not found");
       error.httpStatusCode = 404;
