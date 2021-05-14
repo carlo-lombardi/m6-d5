@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import { cloudMulterExp } from "../../middlewares/cloudinary.js";
 import ExperienceModel from "./schema.js";
+import ProfileModel from "../profiles/schema.js";
 import q2m from "query-to-mongo";
 import json2csv from "json2csv";
 import { fileURLToPath } from "url";
@@ -14,7 +15,7 @@ const uploadImg = cloudMulterExp();
 
 const route = express.Router();
 
-route.get("/", async (req, res, next) => {
+route.get("/:userId/experiences", async (req, res, next) => {
   try {
     if (Object.keys(req.query).length > 0) {
       const query = q2m(req.query);
@@ -58,53 +59,66 @@ route.get("/", async (req, res, next) => {
   }
 });
 
-route.get("/", async (req, res, next) => {
+route.get("/:userId/experiences", async (req, res, next) => {
   try {
-    const experiences = await ExperienceModel.find();
+    const experiences = await ExperienceModel.find({
+      user: mongoose.Types.ObjectId(req.params.userId),
+    });
     res.status(200).send(experiences);
   } catch (err) {
     console.log(err);
     next(err);
   }
 });
-route.get("/CSV", async (req, res, next) => {
+route.get("/:userId/experiences/CSV", async (req, res, next) => {
   try {
-    const csvFields = await ExperienceModel.find();
-    const jsonData = JSON.parse(JSON.stringify(csvFields));
-    const fields = [
-      "id",
-      "role",
-      "company",
-      "description",
-      "startDate",
-      "endDate",
-    ];
-    const JSON2CSVParsing = new json2csvParser({ fields });
-    console.log(JSON2CSVParsing);
-    const csvData = JSON2CSVParsing.parse(jsonData);
-    const pathExpData = join(
-      dirname(fileURLToPath(import.meta.url)),
-      "./csv/ExperienceData.csv"
-    );
-    fs.writeFile(pathExpData, csvData, function (error) {
-      if (error) throw error;
-      console.log("successfully!");
+    const csvFields = await ExperienceModel.find({
+      user: mongoose.Types.ObjectId(req.params.userId),
     });
-    res.set("Content-Type", "text/csv");
-    res.setHeader(
-      "Content-Disposition",
-      "attachment; filename=ExperienceData.csv"
-    );
-    res.status(200).end(csvData);
+    if (csvFields) {
+      const jsonData = JSON.parse(JSON.stringify(csvFields));
+      const fields = [
+        "_id",
+        "role",
+        "company",
+        "description",
+        "startDate",
+        "endDate",
+      ];
+      const JSON2CSVParsing = new json2csvParser({ fields });
+      console.log(JSON2CSVParsing);
+      const csvData = JSON2CSVParsing.parse(jsonData);
+      const pathExpData = join(
+        dirname(fileURLToPath(import.meta.url)),
+        "./csv/ExperienceData.csv"
+      );
+      fs.writeFile(pathExpData, csvData, function (error) {
+        if (error) throw error;
+        console.log("successfully!");
+      });
+      res.set("Content-Type", "text/csv");
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=ExperienceData.csv"
+      );
+      res.status(200).send(csvFields);
+    } else {
+      const error = new Error("profile not found");
+      error.httpStatusCode = 404;
+      next(error);
+    }
   } catch (err) {
     console.log(err);
     next(err);
   }
 });
 
-route.get("/:expId", async (req, res, next) => {
+route.get("/:userId/experiences/:expId", async (req, res, next) => {
   try {
-    const experiences = await ExperienceModel.findById(req.params.id);
+    const experiences = await ExperienceModel.find({
+      user: mongoose.Types.ObjectId(req.params.userId),
+      _id: mongoose.Types.ObjectId(req.params.expId),
+    });
     if (experiences) {
       res.send(experiences);
     } else {
@@ -117,7 +131,7 @@ route.get("/:expId", async (req, res, next) => {
     next(err);
   }
 });
-route.post("/", async (req, res, next) => {
+route.post("/:userId/experiences", async (req, res, next) => {
   try {
     const newExperience = new ExperienceModel({
       ...req.body,
@@ -129,23 +143,33 @@ route.post("/", async (req, res, next) => {
     next(err);
   }
 });
-route.post("/:expId/picture", uploadImg, async (req, res, next) => {
-  try {
-    const newExperience = new ExperienceModel({
-      ...req.body,
-      imageUrl: req.file.path,
-    });
-    const { _id } = await newExperience.save();
-    res.status(201).send(_id);
-  } catch (err) {
-    console.log(err);
-    next(err);
+route.post(
+  "/:userId/experiences/:expId/picture",
+  uploadImg,
+  async (req, res, next) => {
+    try {
+      const newExperience = await ExperienceModel.findByIdAndUpdate(
+        req.params.expId,
+        { image: req.file.path },
+        {
+          runValidators: true,
+          new: true,
+        }
+      );
+      const { _id } = await newExperience.save();
+      res.status(201).send(`image with the experience ${_id} was added `);
+    } catch (err) {
+      console.log(err);
+      next(err);
+    }
   }
-});
+);
 
-route.delete("/:expId", async (req, res, next) => {
+route.delete("/:userId/experiences/:expId", async (req, res, next) => {
   try {
-    const experience = await ExperienceModel.findByIdAndDelete(req.params.id);
+    const experience = await ExperienceModel.findByIdAndDelete(
+      req.params.expId
+    );
     if (experience) {
       res.send("experience deleted!");
     } else {
@@ -158,10 +182,10 @@ route.delete("/:expId", async (req, res, next) => {
   }
 });
 
-route.put("/:expId", async (req, res, next) => {
+route.put("/:userId/experiences/:expId", async (req, res, next) => {
   try {
     const experience = await ExperienceModel.findByIdAndUpdate(
-      req.params.id,
+      req.params.expId,
       req.body,
       {
         runValidators: true,
@@ -171,7 +195,9 @@ route.put("/:expId", async (req, res, next) => {
     if (experience) {
       res.send(experience);
     } else {
-      const error = new Error(`experience with id ${req.params.id} not found`);
+      const error = new Error(
+        `experience with id ${req.params.expId} not found`
+      );
       error.httpStatusCode = 404;
       next(error);
     }
