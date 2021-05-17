@@ -1,43 +1,61 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import ProfileModel from "../services/profiles/schema.js";
+import bcrypt from "bcrypt";
 
 const route = express.Router();
 
 route.post("/login", async (req, res, next) => {
-  const user = await ProfileModel.find({
-    $and: [
-      { $or: [{ username: req.body.username }, { email: req.body.email }] },
-      { password: req.body.password },
-    ],
-  });
+  try {
+    const foundUser = await ProfileModel.findOne({
+      $or: [{ username: req.body.username }, { email: req.body.email }],
+    }).select("password");
 
-  if (user.length === 1) {
-    const accessToken = generateAccessToken(user);
+    if (foundUser) {
+      const verified = await bcrypt.compare(
+        req.body.password,
+        foundUser.password
+      );
 
-    res.json({ id: user[0]._id, accessToken: accessToken });
-  } else {
-    res.status(404);
+      if (verified) {
+        const accessToken = generateAccessToken(foundUser);
+        res.json({ accessToken: accessToken });
+      } else {
+        res.status(404);
+      }
+    }
+  } catch (error) {
+    next(error);
   }
 });
 
-function generateAccessToken(user) {
-  return jwt.sign({ sub: user[0]._id }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "30d",
+function generateAccessToken(foundUser) {
+  return jwt.sign({ sub: foundUser._id }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "1d",
   });
 }
 
 route.post("/register", async (req, res, next) => {
-  const newUser = await ProfileModel.create(req.body);
-  if (newUser) {
+  try {
+    const hashPwd = await bcrypt.hash(
+      req.body.password,
+      parseInt(process.env.SALT_ROUNDS)
+    );
+    const newUser = await ProfileModel.create({
+      ...req.body,
+      password: hashPwd,
+    });
+
     const accessToken = jwt.sign(
       { sub: newUser._id },
       process.env.ACCESS_TOKEN_SECRET
     );
+
     res.status(201).send({
-      id: `${newUser._id}`,
       accessToken: `${accessToken}`,
     });
+  } catch (error) {
+    next(error);
   }
 });
 

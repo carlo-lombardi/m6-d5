@@ -91,25 +91,24 @@ route.delete("/:id", async (req, res, next) => {
     next(err);
   }
 });
-// /:postId/user/:userId/comment/:commentId
+
 route.post(
   "/:postId/user/:userId/comment",
   uploadImg,
   async (req, res, next) => {
     try {
-      const comment = new CommentSchema(req.body);
-      const newComment = {
-        ...comment.toObject(),
-        image: req.file ? req.file.path : null,
-      };
-
       const post = await PostModel.findById(req.params.postId);
       if (post) {
+        const comment = new CommentSchema(req.body);
+        const newComment = {
+          ...comment.toObject(),
+          image: req.file ? req.file.path : null,
+        };
         await PostModel.findByIdAndUpdate(
           req.params.postId,
           {
             $push: {
-              comments: { ...newComment, userId: req.params.userId },
+              comments: { ...newComment, user: req.params.userId },
             },
           },
           {
@@ -119,7 +118,6 @@ route.post(
         );
         res.status(201).send(newComment);
       }
-      next(new NotFoundError(`Post with this Id is not found!`));
     } catch (err) {
       console.log(err);
       next(err);

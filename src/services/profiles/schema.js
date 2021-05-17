@@ -19,6 +19,8 @@ const ProfileSchema = new Schema(
       required: true,
       lowercase: true,
       trim: true,
+      match: /.+\@.+\..+/,
+      unique: true,
     },
     bio: {
       type: String,
@@ -45,6 +47,7 @@ const ProfileSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+      unique: true,
     },
     password: {
       type: String,

@@ -23,9 +23,9 @@ server.use(cors());
 
 server.use("/", authRoute);
 
-server.use("/profile", profileRouter);
-server.use("/profile", experiencesRouter);
-server.use("/posts", postsRouter);
+server.use("/profile", authenticateToken, profileRouter);
+server.use("/profile", authenticateToken, experiencesRouter);
+server.use("/posts", authenticateToken, postsRouter);
 
 // ERROR HANDLERS MIDDLEWARES
 
@@ -40,6 +40,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
+    useCreateIndex: true,
   })
   .then(
     server.listen(port, () => {

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { CommentSchema } from "./commentSchema.js";
 
 const { Schema, model } = mongoose;
 
@@ -12,6 +13,7 @@ const PostSchema = new Schema(
     username: {
       type: String,
       trim: true,
+      required: true,
     },
     user: {
       type: Schema.Types.ObjectId,
@@ -22,6 +24,10 @@ const PostSchema = new Schema(
       type: String,
       trim: true,
     },
+    comments: [CommentSchema],
+    likes: [],
+    loves: [],
+    celebrates: [],
   },
   { timestamps: true }
 );

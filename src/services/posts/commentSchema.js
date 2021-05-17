@@ -9,7 +9,7 @@ export const CommentSchema = new Schema(
       required: true,
       trim: true,
     },
-    userId: { type: Schema.Types.ObjectId, ref: "Profile" },
+    user: { type: Schema.Types.ObjectId, ref: "Profile", required: true },
     image: {
       type: String,
       trim: true,
