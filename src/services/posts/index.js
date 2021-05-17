@@ -4,6 +4,7 @@ import { cloudMulterPosts } from "../../middlewares/cloudinary.js";
 import PostModel from "./schema.js";
 import q2m from "query-to-mongo";
 import CommentSchema from "./commentSchema.js";
+import ProfileModel from "../profiles/schema.js";
 
 const uploadImg = cloudMulterPosts();
 
@@ -92,6 +93,8 @@ route.delete("/:id", async (req, res, next) => {
   }
 });
 
+// comments
+
 route.post(
   "/:postId/user/:userId/comment",
   uploadImg,
@@ -129,7 +132,7 @@ route.put(
   uploadImg,
   async (req, res, next) => {
     try {
-      const editedPost = await PostModel.findOneAndUpdate(
+      const editedComment = await PostModel.findOneAndUpdate(
         {
           _id: req.params.postId,
           "comments._id": req.params.commentId,
@@ -145,7 +148,7 @@ route.put(
         }
       );
 
-      res.status(201).send(editedPost);
+      res.status(201).send(editedComment);
     } catch (err) {
       console.log(err);
       next(err);
@@ -156,7 +159,7 @@ route.delete(
   "/:postId/user/:userId/comment/:commentId",
   async (req, res, next) => {
     try {
-      const editedPost = await PostModel.findByIdAndUpdate(
+      const findComment = await PostModel.findByIdAndUpdate(
         {
           _id: req.params.postId,
         },
@@ -168,12 +171,213 @@ route.delete(
         { new: true }
       );
 
-      res.status(201).send(editedPost);
+      res.status(201).send(findComment);
     } catch (err) {
       console.log(err);
       next(err);
     }
   }
 );
+
+// Reactions
+
+route.post("/:postId/user/:userId/like", async (req, res, next) => {
+  try {
+    const urlArray = req.originalUrl.split("/");
+    const reaction = urlArray[urlArray.length - 1];
+
+    const finalReaction = reaction === "thoughtful" ? reaction : reaction + "s";
+
+    const post = await postModel.findById(req.params.postId);
+
+    const newArray = `${finalReaction}`;
+
+    if (!post[finalReaction].includes(req.params.userId)) {
+      const removed = await postModel.findOneAndUpdate(
+        {
+          _id: req.params.postId,
+        },
+        {
+          $pull: {
+            likes: req.params.userId,
+            loves: req.params.userId,
+            insightfuls: req.params.userId,
+            celebrates: req.params.userId,
+            supports: req.params.userId,
+            curiouss: req.params.userId,
+          },
+        },
+        {
+          runValidators: true,
+          new: true,
+        }
+      );
+      const editedPost = await postModel.findOneAndUpdate(
+        {
+          _id: req.params.postId,
+        },
+        {
+          $push: {
+            [newArray]: req.params.userId,
+          },
+        },
+        {
+          runValidators: true,
+          new: true,
+        }
+      );
+      return res.status(201).send(editedPost);
+    } else {
+      const deleteReaction = await postModel.findByIdAndUpdate(
+        req.params.postId,
+        {
+          $pull: {
+            [newArray]: req.params.userId,
+          },
+        },
+
+        {
+          runValidators: true,
+          new: true,
+        }
+      );
+      return res.status(204).send(deleteReaction);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+route.post("/:postId/user/:userId/celebrate", async (req, res, next) => {
+  try {
+    const urlArray = req.originalUrl.split("/");
+    const reaction = urlArray[urlArray.length - 1];
+
+    const finalReaction = reaction === "thoughtful" ? reaction : reaction + "s";
+
+    const post = await postModel.findById(req.params.postId);
+
+    const newArray = `${finalReaction}`;
+
+    if (!post[finalReaction].includes(req.params.userId)) {
+      const removed = await postModel.findOneAndUpdate(
+        {
+          _id: req.params.postId,
+        },
+        {
+          $pull: {
+            likes: req.params.userId,
+            loves: req.params.userId,
+            insightfuls: req.params.userId,
+            celebrates: req.params.userId,
+            supports: req.params.userId,
+            curiouss: req.params.userId,
+          },
+        },
+        {
+          runValidators: true,
+          new: true,
+        }
+      );
+      const editedPost = await postModel.findOneAndUpdate(
+        {
+          _id: req.params.postId,
+        },
+        {
+          $push: {
+            [newArray]: req.params.userId,
+          },
+        },
+        {
+          runValidators: true,
+          new: true,
+        }
+      );
+      return res.status(201).send(editedPost);
+    } else {
+      const deleteReaction = await postModel.findByIdAndUpdate(
+        req.params.postId,
+        {
+          $pull: {
+            [newArray]: req.params.userId,
+          },
+        },
+
+        {
+          runValidators: true,
+          new: true,
+        }
+      );
+      return res.status(204).send(deleteReaction);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+route.post("/:postId/user/:userId/love", async (req, res, next) => {
+  try {
+    const urlArray = req.originalUrl.split("/");
+    const reaction = urlArray[urlArray.length - 1];
+
+    const finalReaction = reaction === "thoughtful" ? reaction : reaction + "s";
+
+    const post = await postModel.findById(req.params.postId);
+
+    const newArray = `${finalReaction}`;
+
+    if (!post[finalReaction].includes(req.params.userId)) {
+      const removed = await postModel.findOneAndUpdate(
+        {
+          _id: req.params.postId,
+        },
+        {
+          $pull: {
+            likes: req.params.userId,
+            loves: req.params.userId,
+            insightfuls: req.params.userId,
+            celebrates: req.params.userId,
+            supports: req.params.userId,
+            curiouss: req.params.userId,
+          },
+        },
+        {
+          runValidators: true,
+          new: true,
+        }
+      );
+      const editedPost = await postModel.findOneAndUpdate(
+        {
+          _id: req.params.postId,
+        },
+        {
+          $push: {
+            [newArray]: req.params.userId,
+          },
+        },
+        {
+          runValidators: true,
+          new: true,
+        }
+      );
+      return res.status(201).send(editedPost);
+    } else {
+      const deleteReaction = await postModel.findByIdAndUpdate(
+        req.params.postId,
+        {
+          $pull: {
+            [newArray]: req.params.userId,
+          },
+        },
+
+        {
+          runValidators: true,
+          new: true,
+        }
+      );
+      return res.status(204).send(deleteReaction);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default route;
