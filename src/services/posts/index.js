@@ -4,7 +4,6 @@ import { cloudMulterPosts } from "../../middlewares/cloudinary.js";
 import PostModel from "./schema.js";
 import q2m from "query-to-mongo";
 import CommentSchema from "./commentSchema.js";
-import ProfileModel from "../profiles/schema.js";
 
 const uploadImg = cloudMulterPosts();
 
@@ -188,12 +187,12 @@ route.post("/:postId/user/:userId/like", async (req, res, next) => {
 
     const finalReaction = reaction === "thoughtful" ? reaction : reaction + "s";
 
-    const post = await postModel.findById(req.params.postId);
+    const post = await PostModel.findById(req.params.postId);
 
     const newArray = `${finalReaction}`;
 
     if (!post[finalReaction].includes(req.params.userId)) {
-      const removed = await postModel.findOneAndUpdate(
+      const removed = await PostModel.findOneAndUpdate(
         {
           _id: req.params.postId,
         },
@@ -201,10 +200,7 @@ route.post("/:postId/user/:userId/like", async (req, res, next) => {
           $pull: {
             likes: req.params.userId,
             loves: req.params.userId,
-            insightfuls: req.params.userId,
             celebrates: req.params.userId,
-            supports: req.params.userId,
-            curiouss: req.params.userId,
           },
         },
         {
@@ -212,7 +208,7 @@ route.post("/:postId/user/:userId/like", async (req, res, next) => {
           new: true,
         }
       );
-      const editedPost = await postModel.findOneAndUpdate(
+      const editedPost = await PostModel.findOneAndUpdate(
         {
           _id: req.params.postId,
         },
@@ -228,7 +224,7 @@ route.post("/:postId/user/:userId/like", async (req, res, next) => {
       );
       return res.status(201).send(editedPost);
     } else {
-      const deleteReaction = await postModel.findByIdAndUpdate(
+      const deleteReaction = await PostModel.findByIdAndUpdate(
         req.params.postId,
         {
           $pull: {
@@ -254,12 +250,12 @@ route.post("/:postId/user/:userId/celebrate", async (req, res, next) => {
 
     const finalReaction = reaction === "thoughtful" ? reaction : reaction + "s";
 
-    const post = await postModel.findById(req.params.postId);
+    const post = await PostModel.findById(req.params.postId);
 
     const newArray = `${finalReaction}`;
 
     if (!post[finalReaction].includes(req.params.userId)) {
-      const removed = await postModel.findOneAndUpdate(
+      const removed = await PostModel.findOneAndUpdate(
         {
           _id: req.params.postId,
         },
@@ -267,10 +263,7 @@ route.post("/:postId/user/:userId/celebrate", async (req, res, next) => {
           $pull: {
             likes: req.params.userId,
             loves: req.params.userId,
-            insightfuls: req.params.userId,
             celebrates: req.params.userId,
-            supports: req.params.userId,
-            curiouss: req.params.userId,
           },
         },
         {
@@ -278,7 +271,7 @@ route.post("/:postId/user/:userId/celebrate", async (req, res, next) => {
           new: true,
         }
       );
-      const editedPost = await postModel.findOneAndUpdate(
+      const editedPost = await PostModel.findOneAndUpdate(
         {
           _id: req.params.postId,
         },
@@ -294,7 +287,7 @@ route.post("/:postId/user/:userId/celebrate", async (req, res, next) => {
       );
       return res.status(201).send(editedPost);
     } else {
-      const deleteReaction = await postModel.findByIdAndUpdate(
+      const deleteReaction = await PostModel.findByIdAndUpdate(
         req.params.postId,
         {
           $pull: {
@@ -320,12 +313,12 @@ route.post("/:postId/user/:userId/love", async (req, res, next) => {
 
     const finalReaction = reaction === "thoughtful" ? reaction : reaction + "s";
 
-    const post = await postModel.findById(req.params.postId);
+    const post = await PostModel.findById(req.params.postId);
 
     const newArray = `${finalReaction}`;
 
     if (!post[finalReaction].includes(req.params.userId)) {
-      const removed = await postModel.findOneAndUpdate(
+      const removed = await PostModel.findOneAndUpdate(
         {
           _id: req.params.postId,
         },
@@ -333,10 +326,7 @@ route.post("/:postId/user/:userId/love", async (req, res, next) => {
           $pull: {
             likes: req.params.userId,
             loves: req.params.userId,
-            insightfuls: req.params.userId,
             celebrates: req.params.userId,
-            supports: req.params.userId,
-            curiouss: req.params.userId,
           },
         },
         {
@@ -344,7 +334,7 @@ route.post("/:postId/user/:userId/love", async (req, res, next) => {
           new: true,
         }
       );
-      const editedPost = await postModel.findOneAndUpdate(
+      const editedPost = await PostModel.findOneAndUpdate(
         {
           _id: req.params.postId,
         },
@@ -360,7 +350,7 @@ route.post("/:postId/user/:userId/love", async (req, res, next) => {
       );
       return res.status(201).send(editedPost);
     } else {
-      const deleteReaction = await postModel.findByIdAndUpdate(
+      const deleteReaction = await PostModel.findByIdAndUpdate(
         req.params.postId,
         {
           $pull: {
