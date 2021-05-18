@@ -115,7 +115,6 @@ route.get("/:id", async (req, res, next) => {
 });
 
 route.post("/", async (req, res, next) => {
-  console.log("posting new profile");
   const defaultProfileImageUrl =
     "https://simplyilm.com/wp-content/uploads/2017/08/temporary-profile-placeholder-1.jpg";
   try {
@@ -133,7 +132,6 @@ route.post("/", async (req, res, next) => {
 });
 
 route.post("/:id/picture", uploadImg, async (req, res, next) => {
-  console.log("changing profile picture");
   try {
     const editedProfile = await ProfileModel.findByIdAndUpdate(
       req.params.id,
