@@ -64,7 +64,7 @@ route.get("/:userId/experiences", async (req, res, next) => {
     const experiences = await ExperienceModel.find({
       user: mongoose.Types.ObjectId(req.params.userId),
     });
-    console.log(experiences);
+
     res.status(200).send(experiences);
   } catch (err) {
     console.log(err);
@@ -87,7 +87,7 @@ route.get("/:userId/experiences/CSV", async (req, res, next) => {
         "endDate",
       ];
       const JSON2CSVParsing = new json2csvParser({ fields });
-      console.log(JSON2CSVParsing);
+
       const csvData = JSON2CSVParsing.parse(jsonData);
       const pathExpData = join(
         dirname(fileURLToPath(import.meta.url)),
