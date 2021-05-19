@@ -54,7 +54,6 @@ route.get("/:userId/experiences", async (req, res, next) => {
       next();
     }
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -67,7 +66,6 @@ route.get("/:userId/experiences", async (req, res, next) => {
 
     res.status(200).send(experiences);
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -95,7 +93,6 @@ route.get("/:userId/experiences/CSV", async (req, res, next) => {
       );
       fs.writeFile(pathExpData, csvData, function (error) {
         if (error) throw error;
-        console.log("successfully!");
       });
       res.set("Content-Type", "text/csv");
       res.setHeader(
@@ -109,7 +106,6 @@ route.get("/:userId/experiences/CSV", async (req, res, next) => {
       next(error);
     }
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -128,7 +124,6 @@ route.get("/:userId/experiences/:expId", async (req, res, next) => {
       next(error);
     }
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -140,7 +135,6 @@ route.post("/:userId/experiences", async (req, res, next) => {
     const { _id } = await newExperience.save();
     res.status(201).send(_id);
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -160,7 +154,6 @@ route.post(
       const { _id } = await newExperience.save();
       res.status(201).send(`image with the experience ${_id} was added `);
     } catch (err) {
-      console.log(err);
       next(err);
     }
   }

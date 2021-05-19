@@ -38,7 +38,6 @@ route.get("/me", async (req, res, next) => {
         res.status(200).send(updatedUser);
       });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 });
@@ -83,7 +82,6 @@ route.get("/", async (req, res, next) => {
       next();
     }
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -93,7 +91,6 @@ route.get("/", async (req, res, next) => {
     const profiles = await ProfileModel.find();
     res.status(200).send(profiles);
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -109,7 +106,6 @@ route.get("/:id", async (req, res, next) => {
       next(error);
     }
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -126,7 +122,6 @@ route.post("/", async (req, res, next) => {
     const { _id } = await newProfile.save();
     res.status(201).send(`New profile with ${_id} created successfully`);
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -145,7 +140,6 @@ route.post("/:id/picture", uploadImg, async (req, res, next) => {
     const { _id } = await editedProfile.save();
     res.status(201).send(editedProfile);
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -218,7 +212,7 @@ route.get("/:id/cv", async (req, res, next) => {
       pdf
         .create(document, options)
         .then((result) => {
-          console.log(result);
+          
           res.sendFile(result.filename);
         })
         .catch((error) => {
@@ -228,7 +222,6 @@ route.get("/:id/cv", async (req, res, next) => {
         .create(pdfTemplate(profile, experience), { format: "A3" })
         .toFile(`cv.pdf`, (err) => {
           if (err) {
-            console.log(err);
           } else {
             const file = join(currentWorkingDirectory, "../../../cv.pdf");
             res.sendFile(file);
@@ -240,7 +233,6 @@ route.get("/:id/cv", async (req, res, next) => {
       next(error);
     }
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });

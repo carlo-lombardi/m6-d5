@@ -14,7 +14,6 @@ route.get("/", async (req, res, next) => {
     const posts = await PostModel.find().populate("user");
     res.status(200).send(posts);
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -31,7 +30,6 @@ route.get("/:id", async (req, res, next) => {
       next(error);
     }
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -46,7 +44,6 @@ route.post("/", uploadImg, async (req, res, next) => {
     const { _id } = await newPost.save();
     res.status(201).send(newPost);
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -71,7 +68,6 @@ route.put("/:id", uploadImg, async (req, res, next) => {
       next(error);
     }
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -87,7 +83,6 @@ route.delete("/:id", async (req, res, next) => {
       next(error);
     }
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -121,7 +116,6 @@ route.post(
         res.status(201).send(newComment);
       }
     } catch (err) {
-      console.log(err);
       next(err);
     }
   }
@@ -149,7 +143,6 @@ route.put(
 
       res.status(201).send(editedComment);
     } catch (err) {
-      console.log(err);
       next(err);
     }
   }
@@ -172,7 +165,6 @@ route.delete(
 
       res.status(201).send(findComment);
     } catch (err) {
-      console.log(err);
       next(err);
     }
   }

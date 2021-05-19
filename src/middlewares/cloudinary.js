@@ -15,7 +15,7 @@ const cloudMulter = () => {
     storage: cloudinaryStorage,
     fileFilter: function (req, file, next) {
       const acceptedExt = [".png", ".jpg", ".gif", ".bmp", ".jpeg"];
-      console.log(file);
+
       if (!acceptedExt.includes(extname(file.originalname))) {
         return next(
           new ErrorResponse(
@@ -45,7 +45,7 @@ export const cloudMulterPosts = () => {
     storage: cloudinaryStorage,
     fileFilter: function (req, file, next) {
       const acceptedExt = [".png", ".jpg", ".gif", ".bmp", ".jpeg"];
-      console.log(file);
+
       if (!acceptedExt.includes(extname(file.originalname))) {
         return next(
           new ErrorResponse(
@@ -73,7 +73,7 @@ export const cloudMulterExp = () => {
     storage: cloudinaryStorage,
     fileFilter: function (req, file, next) {
       const acceptedExt = [".png", ".jpg", ".gif", ".bmp", ".jpeg"];
-      console.log(file);
+
       if (!acceptedExt.includes(extname(file.originalname))) {
         return next(
           new ErrorResponse(
