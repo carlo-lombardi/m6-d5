@@ -8,7 +8,7 @@ import q2m from "query-to-mongo";
 import fs from "fs";
 import pdf from "html-pdf";
 import jwt from "jsonwebtoken";
-import axios from "axios";
+
 import pdfTemplate from "./pdf-template.js";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
@@ -27,16 +27,14 @@ route.get("/me", async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     const user = (req.userData = decoded).sub;
 
-    await axios
-      .get(`https://linkedin-m6-bw.herokuapp.com/profile/${user}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        const updatedUser = response.data;
-        res.status(200).send(updatedUser);
-      });
+    const profile = await ProfileModel.findById(user);
+    if (profile) {
+      res.status(200).send(profile);
+    } else {
+      const error = new Error("profile not found");
+      error.httpStatusCode = 404;
+      next(error);
+    }
   } catch (error) {
     next(error);
   }

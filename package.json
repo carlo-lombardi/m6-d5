@@ -12,7 +12,6 @@
   "author": "slavkojos-mihai-carlo",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "cloudinary": "^1.25.1",
     "cors": "^2.8.5",
