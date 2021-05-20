@@ -28,7 +28,7 @@ route.get("/me", async (req, res, next) => {
     const user = (req.userData = decoded).sub;
 
     await axios
-      .get(`http://localhost:3001/profile/${user}`, {
+      .get(`https://linkedin-m6-bw.herokuapp.com/profile/${user}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
