@@ -31,7 +31,7 @@ route.post("/login", async (req, res, next) => {
 
 function generateAccessToken(foundUser) {
   return jwt.sign({ sub: foundUser._id }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "1d",
+    expiresIn: "60m",
   });
 }
 
